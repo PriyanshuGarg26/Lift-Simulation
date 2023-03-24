@@ -4,115 +4,11 @@ const generateBtn = document.querySelector("#generate");
 const lift = document.querySelectorAll(".lift");
 const mainSection = document.querySelector("main");
 
-// const liftsAvailabilitiy = new Map();
-// const liftAt = new Map();
-// const floorLiftMap = new Map();
 const pendingCalls = [];
 let liftArray = [];
 let floorArray = [];
 let liftMap = new Map();
 let floorMap = new Map();
-// let obj = {};
-
-// generateFloors();
-// generateLift();
-// generateLiftBtn();
-// liftdoors();
-// liftMovement();
-// isLiftFree();
-function liftMoving(floorNumber) {
-  const lift = document.querySelectorAll(".lift");
-
-  let liftId = 0;
-  // console.log(lift);
-  liftId = getFreeLift(floorNumber);
-  if (liftId === null) {
-    if (floorMap.get(`floor-${floorNumber + 1}`) !== undefined) {
-      liftId = floorMap.get(`floor-${floorNumber + 1}`)[5];
-      setTimeout(async () => {
-        lift[liftId - 1]
-          .querySelector(".leftgate")
-          .classList.add("left-door--animation");
-        lift[liftId - 1]
-          .querySelector(".rightgate")
-          .classList.add("right-door--animation");
-        liftMap.set(`lift-${liftId}`, true);
-        // floorMap.set(`floor-${floorNumber+1}`, undefined);
-      }, 1000);
-    } else {
-      // liftId = getFreeLift(floorNumber);
-      // pendingCalls.push(floorNumber);
-    }
-  } else {
-    console.log(liftId);
-    setTimeout(async () => {
-      lift[liftId - 1].style.transform = `translateY(-${
-        floorHeight * floorNumber
-      }px)`;
-      // liftMap.set(`lift-${liftId}`, false);
-      // lift[liftId - 1].style.transition = `all ${2*floorNumber}s linear`;
-    });
-    // lift[0].classList.add('left-door--animation','right-door--animation')
-    lift[liftId - 1].addEventListener(
-      "transitionend",
-      async () => {
-        setTimeout(async () => {
-          lift[liftId - 1]
-            .querySelector(".leftgate")
-            .classList.add("left-door--animation");
-          lift[liftId - 1]
-            .querySelector(".rightgate")
-            .classList.add("right-door--animation");
-          liftMap.set(`lift-${liftId}`, true);
-        }, 1000);
-      },
-      { once: true }
-    );
-    lift[liftId - 1]
-      .querySelector(".leftgate")
-      .classList.remove("left-door--animation");
-    lift[liftId - 1]
-      .querySelector(".rightgate")
-      .classList.remove("right-door--animation");
-  }
-  // if (floorArray.length > 0) {
-  //   liftMoving(floorArray[0]);
-  //   floorArray.shift();
-  // }
-}
-
-function liftMovement(floorCount) {
-  const liftBtn = document.querySelectorAll("button");
-  const mainArea = document.querySelector(".floor-container");
-
-  let noOfFloors = floorCount;
-  floorHeight = mainArea.offsetHeight / noOfFloors;
-  // console.log(floorHeight);
-
-  liftBtn.forEach((btn) => {
-    btn.addEventListener("click", async (e) => {
-      // floorHeight = mainArea.offsetHeight / noOfFloors;
-      console.log("click", e.target.id);
-
-      let floorNumber = e.target.id - 1;
-      floorArray.push(floorNumber);
-      console.log(floorArray);
-
-      // let count = 0;
-      // while (floorArray.length > 0) {
-      //   count++;
-      //   if (count > 10) {
-      //     break;
-      //   }
-      //   floorNumber = floorArray.shift();
-      //   console.log(floorNumber);
-      //   console.log(floorArray);
-      //   liftMoving(floorNumber);
-      // }
-      liftMoving(floorNumber);
-    });
-  });
-}
 
 generateBtn.addEventListener("click", () => {
   const floorCount = totalFloors.value;
@@ -178,37 +74,105 @@ function generateLift(liftCount) {
     liftMap.set(`lift-${i}`, true);
     groundFloor.appendChild(lift);
   }
-  console.log(liftMap);
+  // console.log(liftMap);
 }
 
-function getFreeLift(floorNumber) {
-  let notFound = true;
-  for (const liftId of liftArray) {
-    if (
-      liftMap.get(liftId) &
-      (floorMap.get(`floor-${floorNumber + 1}`) === undefined)
-    ) {
-      notFound = false;
-      liftMap.set(liftId, false);
+function liftMovement(floorCount) {
+  const liftBtn = document.querySelectorAll("button");
+  const mainArea = document.querySelector(".floor-container");
+
+  let noOfFloors = floorCount;
+  floorHeight = mainArea.offsetHeight / noOfFloors;
+  // console.log(floorHeight);
+
+  liftBtn.forEach((btn) => {
+    btn.addEventListener("click", async (e) => {
+      // floorHeight = mainArea.offsetHeight / noOfFloors;
+      console.log("click", e.target.id);
+
+      e.target.setAttribute("disabled", "disabled");
+      setTimeout(() => {
+        e.target.removeAttribute("disabled");
+      }, 2500 + 1000 * 4);
+
+      let floorNumber = e.target.id;
+      
+      console.log(floorArray);
+
+      if (floorMap.get(`floor-${floorNumber}`)) {
+        doorMovement(floorMap.get(`floor-${floorNumber}`));
+      } else {
+        getFreeLift(floorNumber);
+      }
+
+      once = true;
+    });
+  });
+}
+
+function doorMovement(liftId) {
+  const liftMove = document.querySelectorAll(".lift")[liftId[5] - 1];
+  let liftLeftmove = liftMove.querySelector(".leftgate");
+  let liftRightmove = liftMove.querySelector(".rightgate");
+
+  setTimeout(() => {
+    liftLeftmove.classList.add("left-door--animation");
+    liftRightmove.classList.add("right-door--animation");
+
+  }, 2000 + 1000);
+  setTimeout(() => {
+    liftLeftmove.classList.remove("left-door--animation");
+    liftRightmove.classList.remove("right-door--animation");
+    liftMap.set(`lift-${liftId[5]}`, true);
+    console.log(liftMap);
+    if (floorArray.length > 0) {
       for (const [key, value] of floorMap.entries()) {
         if (value === liftId) {
           floorMap.set(key, undefined);
         }
       }
-      floorMap.set(`floor-${floorNumber + 1}`, liftId);
+      floorMap.set(`floor-${floorArray[0]}`, liftId);
+      console.log(floorMap);
+      liftMoving(liftId, floorArray[0]);
+      floorArray.shift();
+    }
+  }, 2500 * 3);
+}
+
+function liftMoving(liftId, floorId) {
+  const liftMove = document.querySelectorAll(".lift")
+
+  liftMove[liftId[5]-1].style.transform = `translateY(-${floorHeight * (floorId-1)}px)`;
+let singleFloorHeight=160;
+  liftMove[liftId[5]-1].style.transition = `all  ${
+    Math.abs(floorHeight /singleFloorHeight) * 5.5
+  }s linear`;
+  liftMove[liftId[5]-1].addEventListener("transitionend", () => doorMovement(liftId), {
+    once: true,
+  });
+}
+
+function getFreeLift(floorNumber) {
+  let notFound = true;
+  for (const liftId of liftArray) {
+    if (liftMap.get(liftId) )
+     {
+      notFound = false;
+      liftMap.set(liftId, false);
+      for (const [key, value] of floorMap.entries()) {
+        if (value == liftId) {
+          floorMap.set(key, undefined);
+        }
+      }
+      floorMap.set(`floor-${floorNumber}`, liftId);
       console.log(floorMap);
       console.log(liftMap);
-      return liftId[5];
+      liftMoving(liftId, floorNumber)
+      return;
     }
   }
-  pendingCalls.push(floorNumber + 1);
-  floorArray.push(floorNumber);
-  // to remove duplicate values in array
-  // pendingCalls = [...new Set(pendingCalls)];
-  floorArray = [...new Set(floorArray)];
-  console.log(floorArray);
-  // console.log(pendingCalls);
-  if (notFound) {
-    return null;
+  if(floorNumber in floorArray){
+    return;
   }
+  floorArray.push(floorNumber);
 }

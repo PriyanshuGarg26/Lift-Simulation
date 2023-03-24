@@ -56,27 +56,20 @@
     border: 1px solid #000;
     padding-left: 0.5rem;
   }
-  /* .floor-container{
-      display: flex;
-      flex-direction: column-reverse;
-    } */
+  
   .lift {
     background-color: #000;
     /* height: 100%; */
     display: flex;
-    /* width: 12.5rem; */
-    /* height: 12.5rem; */
+   
     height: 100%;
     margin: 0 1.2rem;
     border-radius: 0.2rem;
     overflow: hidden;
     border: 1px solid #000;
-    transition: all 5s;
+    
   }
-  /* .floor-container{
-      display: flex;
-      flex-direction: column-reverse;
-    } */
+  
   
   .ground {
     display: flex;
@@ -120,10 +113,6 @@
     transition: all 5s;
   }
   
-  /* @keyframes moveLiftUp {
-        0%{transform: translateY(0)}
-        100%{transform: translateY(calc(-160px*3))}
-    } */
   
   @keyframes moveLeftDoor {
     0% {
