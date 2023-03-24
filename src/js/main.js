@@ -145,7 +145,7 @@ function liftMoving(liftId, floorId) {
   liftMove[liftId[5]-1].style.transform = `translateY(-${floorHeight * (floorId-1)}px)`;
 let singleFloorHeight=160;
   liftMove[liftId[5]-1].style.transition = `all  ${
-    Math.abs(floorHeight /singleFloorHeight) * 5.5
+    floorId * 2
   }s linear`;
   liftMove[liftId[5]-1].addEventListener("transitionend", () => doorMovement(liftId), {
     once: true,
